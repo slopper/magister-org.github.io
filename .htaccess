@@ -5,20 +5,11 @@ ErrorDocument 403 /
 
 php_flag opcache.enable Off
 
-RewriteEngine on
-RewriteCond %{HTTP_HOST} ^www.site.ru$ [NC]
-RewriteRule ^(.*)$ http://samp-products.ru/$1 [R=301,L]
-
-RewriteRule ^/?category index.php [L]
-RewriteRule ^/?order index.php [L]
-RewriteRule ^/?orderProduct index.php [L]
-RewriteRule ^/?product index.php [L]
-RewriteRule ^/?goOrder index.php [L]
-
-RewriteRule ^/?auth index.php [L]
-RewriteRule ^/?account index.php [L]
-
-RewriteRule ^/?faq index.php [L]
-RewriteRule ^/?rules index.php [L]
-
-
+RewriteEngine on 
+RewriteRule ^/?users index.php [L]
+RewriteRule ^/?logs-pay index.php [L]
+RewriteRule ^/?logs index.php [L]
+RewriteRule ^/?shares index.php [L]
+RewriteRule ^/?news index.php [L]
+RewriteRule ^/?roulette index.php [L]
+RewriteRule ^/?settings index.php [L]

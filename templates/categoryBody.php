@@ -1,127 +1,103 @@
-﻿<?php
-
-   $idCategory = mysqli_real_escape_string($_MS_ID, $routes[1]);
-   $categoryInfo = "SELECT * FROM `category` WHERE `id` = '{$idCategory}';";
-   $categoryInfo = mysqli_get_query($categoryInfo);
-
-   if(is_null($categoryInfo)) showMessage("warning", "Извините, данная страница сейчас недоступна, повторите попытку позже");
-   else {
-?>
-
-<div class="row">
-    <div class="col-lg-12">
-        <div class="ibox float-e-margins">
-            <div class="ibox-title"><h5>Покупка товара</h5></div>
-            <div class="ibox-content">
-                <div class="results hidden animated fadeIn">
-                    <div class='alert alert-warning' id="errorMsg"></div>
-                    <div class="hr-line-dashed"></div>
-                </div>
-                <form class="form-horizontal" method="POST" id="formx" action="javascript:void(null);" onsubmit="sendOrderCategory()">
-                <div class="form-group">
-                        <label class="col-sm-2 control-label">Способ оплаты:</label>
-                        <div class="col-sm-10">
-                            <select class="form-control" name="method">
-                                <option value="2">С баланса сайта</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="hr-line-dashed"></div>
-
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">Название:</label>
-                        <div class="col-sm-10">
-                            <div class="input-group m-b">
-                                <p class="form-control-static"><?=$categoryInfo['name']?></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">Стоимость:</label>
-                        <div class="col-sm-10">
-                            <div class="input-group">
-                                <p class="form-control-static"><?=$categoryInfo['priceRub']?> руб / шт.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="hr-line-dashed"></div>
-
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">Количество:</label>
-                        <div class="col-sm-10 m-b">
-                            <input type="number" class="form-control" value="<?=$categoryInfo['minCount']?>" name="count" id="count" onchange="updatePrice(<?=$categoryInfo['priceRub']?>);" required>
-                            <span class="help-block m-b-none">Минимальное количество — <?=min($categoryInfo['minCount'],$categoryInfo['count'])?> шт. Доступно всего для покупки — <?=$categoryInfo['count']?> шт.</span>
-                                </p>
-                                <p class="text-info"> <i class='fa fa-bolt'></i> Рекомендуемое количество не менее <?=$categoryInfo['advice']?> шт.</p>
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">Промокод:</label>
-                        <div class="col-sm-10 m-b">
-                            <input type="input" class="form-control" value="" name="promo" id="promo" placeholder="Оставьте пустым, если у вас его нет!">
-                        </div>
-                    </div>
-
-                    <div class="hr-line-dashed"></div>
-
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">Итоговая цена:</label>
-                        <div class="col-sm-10">
-                            <input type="text" disabled class="form-control" id="price" value="<?=$price?>">
-                            <input type="hidden"" name="id" value="<?=$idCategory?>">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label"></label>
-                        <div class="col-sm-10">
-                            <div class="checkbox checkbox-success checkbox-inline">
-                                <input type="checkbox" id="ruleCheck" value="rule" checked="checked">
-                                <label for="ruleCheck">С <a href="/rules/" target="_blank">правилами</a> ознакомлен и полностью согласен.</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">                        
-                        <div class="g-recaptcha col-sm-offset-2" data-sitekey="6Ld3nUQUAAAAAFs7ZABHJll0UyJbzDARV66WbY1-"></div>
-                    </div>
-                 
-                    <div class="form-group">
-                        <div class="col-sm-8"></div>
-                        <div class="col-sm-4">
-                            <input id="sub_button" name="buy" class="ladda-button btn btn-primary pull-right" type="submit" data-style="zoom-in" value="Подтвердить">
-                            <a class="btn btn-white pull-right" href="javascript:history.back()">Отменить</a>
-                        </div>
-                    </div>
-                </form>
-            </div>
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>Все категории</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a href="/">Главная страница</a>
+            </li>
+            <li class="active">
+                <strong>Список категорий</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-sm-8">
+        <div class="title-action">
+            <a href="/logs/category/new" class="btn btn-primary">Новая категория</a>
         </div>
     </div>
 </div>
 
-<script type="text/javascript">
-    function sendOrderCategory() {
-        var postData = $('#formx').serialize();
-        $.ajax({
-            dataType:'json',
-            url:'/main/ajax/createOrderCategory.php',
-            data:postData,
-            type:'POST',
-            success:function(data) {
-                if(data.errorMsg!=null) {
-                    $(".results").removeClass("hidden");
-                    $("#errorMsg").html(data.errorMsg);
-                    d = new Date();
-                    grecaptcha.reset();
-                } else {
-                    window.location.href = location.protocol+'//'+location.hostname+"/order/"+data.idOrder;
-                }
+<div class="wrapper wrapper-content">
+    <?php
+        $maxPlace = "SELECT MAX(`place`) FROM `category`;";
+        $maxPlace = mysqli_get_query($maxPlace);
+        $maxPlace = $maxPlace['MAX(`place`)'];
+
+        if($routes[2] == "delete" && $routes[3] > 0) {
+            if($_SESSION['confirm'] != $routes) {
+                showMessage("danger", "Вы подтверджаете удаление категории(ID: {$routes[3]}) ? <hr/><a href='/{$routes[0]}/{$routes[1]}/{$routes[2]}/{$routes[3]}/confirm' class='btn btn-default pull-right'>Удалить категорию</a><br/><br/>");
+                $routes[4] = "confirm";
+                $_SESSION['confirm'] = $routes;
             }
-        })
-    }
-</script>
+            else if($routes[4] == "confirm") {
+                $id = mysqli_real_escape_string($_MS_ID, $routes[3]);
+                $query = "DELETE FROM `category` WHERE `id` = '{$id}';";
+                if(mysqli_query($_MS_ID, $query)) showMessage("info", "Категория(ID: {$id}) успешно удалена");
+            }
+        } else if($routes[2] == "clear" && $routes[3] > 0) {
+            if($_SESSION['confirm'] != $routes) {
+                showMessage("danger", "Вы подтверджаете очищение категории(ID: {$routes[3]}) ? <hr/><a href='/{$routes[0]}/{$routes[1]}/{$routes[2]}/{$routes[3]}/confirm' class='btn btn-default pull-right'>Очистить категорию</a><br/><br/>");
+                $routes[4] = "confirm";
+                $_SESSION['confirm'] = $routes;
+            }
+            else if($routes[4] == "confirm") {
+                $id = mysqli_real_escape_string($_MS_ID, $routes[3]);
+                $query = "DELETE FROM `product` WHERE `category` = '{$id}' AND (`lastOrder` = '-1' OR `lastOrder` = '0');";
+                if(mysqli_query($_MS_ID, $query)) showMessage("info", "Категория(ID: {$id}) успешно очищена");
+                updateCountersCategories();
+            }
+        } else if($routes[2] == "down" && $routes[3] > 0 && $routes[4] > 0) {
+            $id = mysqli_real_escape_string($_MS_ID, $routes[3]);
+            $place = mysqli_real_escape_string($_MS_ID, $routes[4]);
+            $place++;
+            mysqli_query($_MS_ID, "UPDATE `category` SET `place` = `place`-1 WHERE `place` = '{$place}';");
+            mysqli_query($_MS_ID, "UPDATE `category` SET `place` = `place`+1 WHERE `id` = '{$id}';");
 
-<script>updatePrice(<?=$categoryInfo['priceRub']?>);</script>
+            redirect("/logs/category/");
+        } else if($routes[2] == "up" && $routes[3] > 0 && $routes[4] > 0) {
+            $id = mysqli_real_escape_string($_MS_ID, $routes[3]);
+            $place = mysqli_real_escape_string($_MS_ID, $routes[4]);
+            $place--;
+            mysqli_query($_MS_ID, "UPDATE `category` SET `place` = `place`+1 WHERE `place` = '{$place}';");
+            mysqli_query($_MS_ID, "UPDATE `category` SET `place` = `place`-1 WHERE `id` = '{$id}';");
 
-<?php } ?>
+            redirect("/logs/category/");
+        }
+    ?>
+    <div id="shopTable" class="white-bg">
+        <table class="table table-bordered">
+            <tbody>
+                <?php
+
+                    $categoryInfo = "SELECT * FROM `category` ORDER BY `place`;";
+                    $categoryInfo = mysqli_query($_MS_ID, $categoryInfo);
+
+                    while($category = mysqli_fetch_array($categoryInfo)) {
+                        if($category['place'] == 1) $down = "disabled";
+                        if($category['place'] == $maxPlace) $up = "disabled";
+                        echo "
+                            <tr>
+                                <td>ID: {$category['id']}</td> 
+                                <td>{$category['name']}</td> 
+                                <td class='text-center'>{$category['priceRub']} RUB</td>
+                                <td class='text-center'>{$category['count']} шт</td>
+                                <td>
+                                    <a class='btn btn-danger btn-xs pull-right' href='/logs/category/delete/{$category['id']}'><i class='fa fa-times'></i> DELETE</a>
+                                    <a class='btn btn-danger btn-xs pull-right' style='margin-right: 5px;' href='/logs/category/clear/{$category['id']}'><i class='fa fa-trash'></i> CLEAR</a>
+                                    <a class='btn btn-warning btn-xs' href='/logs/category/edit/{$category['id']}'><i class='fa fa-pencil'></i> EDIT</a>
+                                </td>
+                                <td style='max-width: 45px; min-width: 45px;'>
+                                    <a class='btn btn-info btn-xs block-center {$up}' href='/logs/category/down/{$category['id']}/{$category['place']}'><i class='fa fa-arrow-down'></i></a>
+                                    <a class='btn btn-info btn-xs block-center {$down}' href='/logs/category/up/{$category['id']}/{$category['place']}'><i class='fa fa-arrow-up'></i></a>
+                                </td>
+                            </tr>
+                        ";
+                        unset($up);
+                        unset($down);
+                    }
+                ?>
+            </tbody>
+        </table>
+    </div>
+
+</div>

@@ -1,29 +1,18 @@
-﻿    <nav class="navbar navbar-default" style="margin-bottom: -1px;" role="navigation">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="/">SAMP-PRODUCTS</a>
-        </div>
-        <ul class="nav navbar-nav">
-          <li <?php if($routes[0] == '') echo("class='active' style='border: 0;'"); ?>><a class="page-scroll" href="/"><i class="fa fa-cart-arrow-down"></i>Магазин логов</a></li>
-          <li <?php if($routes[0] == 'faq') echo("class='active' style='border: 0;'"); ?>><a class="page-scroll" href="/faq"><i class="fa fa-question-circle"></i>FAQ</a></li>
-          <li <?php if($routes[0] == 'rules') echo("class='active' style='border: 0;'"); ?>><a class="page-scroll" href="/rules"><i class="fa fa-ban"></i>Правила сайта</a></li>
-          <li <?php if($routes[0] == '#') echo("class='active' style='border: 0;'"); ?>><a class="page-scroll" target="_blank" href="https://vk.com/samp_products"><i class="fa fa-money"></i>Группа ВКонтакте</a></li>
-        </ul>
-		<ul class="nav navbar-nav navbar-right">
-		 <?php
-                if(is_null($currentUser)) {
-                    ?>
-                        <li <?php if($routes[0] == 'auth') echo("class='active' style='border: 0;'"); ?>><a class="page-scroll" href="/auth"><i class="fa fa-gamepad"></i>Авторизироваться</a></li>
-                    <?php
-                    } else {
-                    ?>
-                        <li <?php if($routes[0] == 'account') echo("class='active' style='border: 0;'"); ?>><a class="page-scroll" href="/account"><i class="fa fa-briefcase"></i>Личный кабинет</a></li>
-                    <?php
-                    }
-            ?>  
-		</ul>
-		
-      </div>
-    </nav>
+<link href="/design/css/bootstrap.min.css" rel="stylesheet">
+<link href="/design/font-awesome/css/font-awesome.css" rel="stylesheet">
+<link href="/design/css/animate.css" rel="stylesheet">
+<link href="/design/css/style.css" rel="stylesheet">
+<link href="/design/css/my.css" rel="stylesheet">
 
-</div>                
+<script src="/design/js/jquery-2.1.1.js"></script>
+<script src="/design/js/bootstrap.min.js"></script>
+<script src="/design/js/inspinia.js"></script>
+<script src="/design/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="/design/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="/design/js/bootstrap-editable.min.js"></script>
+
+<link rel="shortcut icon" href="/design/favicon.ico" type="image/x-icon" />
+
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+<script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js'></script>
